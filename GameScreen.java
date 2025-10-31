@@ -1,6 +1,7 @@
 package puppy.code;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -17,6 +18,7 @@ public class GameScreen implements Screen {
 	private BitmapFont font;
 	private Tarro tarro;
 	private Lluvia lluvia;
+	private Texture fondo;
 
 	   
 	//boolean activo = true;
@@ -32,11 +34,14 @@ public class GameScreen implements Screen {
 	      // load the drop sound effect and the rain background "music" 
          Texture gota = new Texture(Gdx.files.internal("drop.png"));
          Texture gotaMala = new Texture(Gdx.files.internal("dropBad.png"));
+         Texture gotaLimpieza = new Texture(Gdx.files.internal("poder.png"));
+         Texture gotaMaldicion = new Texture(Gdx.files.internal("gotaMaligna.png"));
          
+         fondo = new Texture(Gdx.files.internal("fondo.png"));
          Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
         
 	     Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-         lluvia = new Lluvia(gota, gotaMala, dropSound, rainMusic);
+         lluvia = new Lluvia(gota, gotaMala,gotaLimpieza,gotaMaldicion, dropSound, rainMusic);
 	      
 	      // camera
 	      camera = new OrthographicCamera();
@@ -51,13 +56,19 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+		 if (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+		
+		        pause();
+		        return;
+		 }
 		//limpia la pantalla con color azul obscuro.
 		ScreenUtils.clear(0, 0, 0.2f, 1);
-		//actualizar matrices de la cámara
+		//actualizar matrices de la cÃ¡mara
 		camera.update();
 		//actualizar 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
+		batch.draw(fondo, 0, 0, 800, 480);
 		//dibujar textos
 		font.draw(batch, "Gotas totales: " + tarro.getPuntos(), 5, 475);
 		font.draw(batch, "Vidas : " + tarro.getVidas(), 670, 475);
@@ -113,7 +124,7 @@ public class GameScreen implements Screen {
 	public void dispose() {
       tarro.destruir();
       lluvia.destruir();
-
+      fondo.dispose();
 	}
 
 }
