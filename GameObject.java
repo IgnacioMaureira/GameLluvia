@@ -11,7 +11,7 @@ public abstract class GameObject {
     private float height;
     private Texture texture;
     private Rectangle bounds;
-    private boolean active; // Estado del objeto
+    private boolean active;
     
     
     public GameObject(float x, float y, float width, float height) {
@@ -29,10 +29,6 @@ public abstract class GameObject {
     // MÉTODO ABSTRACTO: cada hijo lo implementa según su comportamiento
     public abstract void update(float deltaTime);
     
-    /**
-     * Renderiza el objeto si está activo
-     * PRINCIPIO: Template Method Pattern
-     */
     public final void render(SpriteBatch batch) {
         if (active && texture != null) {
             beforeRender(batch);
@@ -41,7 +37,6 @@ public abstract class GameObject {
         }
     }
     
-    // Hook methods para que las subclases extiendan funcionalidad
     protected void beforeRender(SpriteBatch batch) {
         // Puede ser sobrescrito por subclases
     }
@@ -50,10 +45,7 @@ public abstract class GameObject {
         // Puede ser sobrescrito por subclases
     }
     
-    /**
-     * Actualiza el rectángulo de colisión
-     * PRIVATE: lógica interna, llamado automáticamente
-     */
+
     private void updateBounds() {
         bounds.set(x, y, width, height);
     }
@@ -113,10 +105,7 @@ public abstract class GameObject {
         return texture;
     }
     
-    /**
-     * Verifica colisión con otro objeto
-     * PRINCIPIO: Tell, Don't Ask
-     */
+
     public boolean collidesWith(GameObject other) {
         if (other == null || !this.active || !other.active) {
             return false;
@@ -124,9 +113,7 @@ public abstract class GameObject {
         return this.bounds.overlaps(other.bounds);
     }
     
-    /**
-     * Verifica si el objeto está fuera de los límites
-     */
+
     public boolean isOutOfBounds(float minX, float maxX, float minY, float maxY) {
         return x + width < minX || x > maxX || y + height < minY || y > maxY;
     }
