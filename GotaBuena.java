@@ -1,38 +1,36 @@
 package com.mygame.rain.entities;
 
+import com.mygame.rain.interfaces.MovimientoStrategy;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygame.rain.interfaces.Collectable;
 
 public class GotaBuena extends GameObject implements Collectable {
-	private static final float velocidad_Caida = 300f;
-    private static final int puntos_Valor = 10;
-    
-    private float velocidad;
-    private final int puntos;
+
+    private static final int PUNTOS_VALOR = 10;
     private boolean recolectada;
-    
-    public GotaBuena(float x, float y, Texture texture) {
+    private final int puntos;
+
+    public GotaBuena(float x, float y, Texture textura, MovimientoStrategy estrategia) {
         super(x, y, 64, 64);
-        setTexture(texture);
-        this.velocidad = velocidad_Caida;
-        this.puntos = puntos_Valor;
+        setTexture(textura);
         this.recolectada = false;
+        this.puntos = PUNTOS_VALOR;
+
+        setEstrategiaMovimiento(estrategia);
     }
-    
+
     @Override
-    public void update(float deltaTime) {
-        if (isActive() && !recolectada) {
-            // Caer hacia abajo
-            setY(getY() - velocidad * Gdx.graphics.getDeltaTime());
-        }
+    protected void mover(float deltaTime) {
+        aplicarEstrategiaMovimiento(deltaTime);
     }
-    
-    // Implementación de Collectable
+
+    @Override
     public int getPoints() {
         return puntos;
     }
-    
+
+    @Override
     public void onCollect() {
         if (isCollectable()) {
             recolectada = true;
@@ -40,25 +38,14 @@ public class GotaBuena extends GameObject implements Collectable {
             System.out.println("¡Gota buena recolectada! +" + puntos + " puntos");
         }
     }
-    
+
+    @Override
     public boolean isCollectable() {
         return isActive() && !recolectada;
     }
-    
-    // Getters
-    public float getVelocidad() {
-        return velocidad;
-    }
-    
-    public void setVelocidad(float velocidad) {
-        if (velocidad < 0) {
-            throw new IllegalArgumentException("Velocidad debe ser positiva");
-        }
-        this.velocidad = velocidad;
-    }
-    
+
     @Override
     public void dispose() {
-        // Textura compartida, no se dispone aquí
+        // textura compartida, no se elimina aquí
     }
 }
