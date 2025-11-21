@@ -1,35 +1,34 @@
 package com.mygame.rain.entities;
 
+import com.mygame.rain.interfaces.MovimientoStrategy;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygame.rain.interfaces.Collectable;
 
 public class GotaMaldicion extends GameObject implements Collectable {
-	private static final float VELOCIDAD_CAIDA = 250f;
-    private static final float DURACION_EFECTO = 10.0f; // 10 segundos
-    
-    private float velocidad;
+
+    private static final float DURACION_EFECTO = 10.0f;
+
     private boolean recolectada;
-    
-    public GotaMaldicion(float x, float y, Texture texture) {
+
+    public GotaMaldicion(float x, float y, Texture textura, MovimientoStrategy estrategia) {
         super(x, y, 64, 64);
-        setTexture(texture);
-        this.velocidad = VELOCIDAD_CAIDA;
+        setTexture(textura);
         this.recolectada = false;
+
+        setEstrategiaMovimiento(estrategia);
     }
-    
+
     @Override
-    public void update(float deltaTime) {
-        if (isActive() && !recolectada) {
-            setY(getY() - velocidad * Gdx.graphics.getDeltaTime());
-        }
+    protected void mover(float deltaTime) {
+        aplicarEstrategiaMovimiento(deltaTime);
     }
-    
+
     @Override
     public int getPoints() {
-        return 0; // No da puntos
+        return 0;
     }
-    
+
     @Override
     public void onCollect() {
         if (isCollectable()) {
@@ -38,35 +37,20 @@ public class GotaMaldicion extends GameObject implements Collectable {
             System.out.println("¡MALDICIÓN! Más gotas malas por " + DURACION_EFECTO + " segundos");
         }
     }
-    
+
     @Override
     public boolean isCollectable() {
         return isActive() && !recolectada;
     }
-    
-    // Identifica que esta es una gota de maldición
+
     public boolean esGotaMaldicion() {
         return true;
     }
-    
-    // Duración del efecto de maldición
+
     public float getDuracionEfecto() {
         return DURACION_EFECTO;
     }
-    
-    public float getVelocidad() {
-        return velocidad;
-    }
-    
-    public void setVelocidad(float velocidad) {
-        if (velocidad < 0) {
-            throw new IllegalArgumentException("Velocidad debe ser positiva");
-        }
-        this.velocidad = velocidad;
-    }
-    
+
     @Override
-    public void dispose() {
-        // No hay recursos adicionales que liberar
-    }
+    public void dispose() {}
 }
